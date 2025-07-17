@@ -3,6 +3,7 @@ name: CI
 on:
   push:
     branches: [ "main" ]
+    tags: [ "*" ]
 
 jobs:
   build:
@@ -11,6 +12,16 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      # https://github.com/docker/metadata-action
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: beigirad/tiny-android
+          tags: |
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=ref,event=tag
 
       # https://github.com/docker/setup-buildx-action
       - name: Set up Docker Buildx
@@ -28,5 +39,6 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          tags: beigirad/tiny-android:${{ github.sha }}
           push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
