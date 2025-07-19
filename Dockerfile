@@ -1,14 +1,14 @@
-FROM alpine:3.22.1
+FROM ubuntu:24.04
 LABEL authors="beigirad"
 
 # Install base tools and dependencies
-RUN apk update && apk add --no-cache \
+RUN apt-get update && apt-get install -qqy --no-install-recommends \
     bash \
     curl \
     unzip \
     git \
-    openjdk11-jdk \
-    && rm -rf /var/cache/apk/*
+    openjdk-11-jdk \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 ENV ANDROID_HOME='/android-sdk'
 
